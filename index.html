@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Visitors Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .login-bg {
+            background-color: #f0f9ff;
+            background-image: linear-gradient(135deg, #f0f9ff 0%, #e6f3ff 100%);
+        }
+        @media print {
+            .no-print { display: none; }
+            .print-area { width: 5.5in; height: 8.5in; margin: 0; padding: 1cm; }
+        }
+    </style>
+</head>
+<body class="login-bg min-h-screen">
+    <!-- Login Section -->
+    <div id="loginSection" class="container mx-auto px-4 h-screen flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h1 class="text-2xl font-bold text-center mb-6 text-blue-600">Smart Visitors Management</h1>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" id="username" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                </div>
+                <div class="flex space-x-4">
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="role" value="hod" class="form-radio" checked>
+                        <span class="ml-2">HOD</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="role" value="gatekeeper" class="form-radio">
+                        <span class="ml-2">Gatekeeper</span>
+                    </label>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white rounded-md py-2 hover:bg-blue-700 transition-colors">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Visitor Entry Form -->
+    <div id="visitorSection" class="container mx-auto px-4 py-8 hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-blue-600">Visitor Entry Form</h2>
+                <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+            <form id="visitorForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Visitor's Name</label>
+                        <input type="text" id="visitorName" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Contact Number</label>
+                        <input type="tel" id="contact" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Purpose of Visit</label>
+                        <textarea id="purpose" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Whom to Meet</label>
+                        <input type="text" id="meetPerson" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-4">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="vehicle" class="form-checkbox">
+                            <span class="ml-2">With Vehicle</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="lunch" class="form-checkbox">
+                            <span class="ml-2">Lunch Required</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" id="internet" class="form-checkbox">
+                            <span class="ml-2">Internet Required</span>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Number of Persons</label>
+                        <input type="number" id="personCount" min="1" value="1" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Visitor's Photo</label>
+                        <div class="mt-1 flex flex-col items-center">
+                            <video id="camera" class="w-full h-48 bg-gray-100 rounded hidden"></video>
+                            <canvas id="canvas" class="w-full h-48 bg-gray-100 rounded hidden"></canvas>
+                            <img id="photo" class="w-full h-48 bg-gray-100 rounded object-contain" alt="Visitor's photo">
+                            <div class="mt-2 flex space-x-2">
+                                <button type="button" onclick="startCamera()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                                    <i class="bi bi-camera"></i> Start Camera
+                                </button>
+                                <button type="button" onclick="capturePhoto()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                    <i class="bi bi-camera-fill"></i> Capture
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-span-full flex justify-end space-x-4">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                        <i class="bi bi-save"></i> Save
+                    </button>
+                    <button type="button" onclick="printPass()" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+                        <i class="bi bi-printer"></i> Print Pass
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Login handling
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('visitorSection').classList.remove('hidden');
+        });
+
+        function logout() {
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('visitorSection').classList.add('hidden');
+            document.getElementById('loginForm').reset();
+        }
+
+        // Camera handling
+        let stream;
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.getElementById('camera');
+                video.srcObject = stream;
+                video.classList.remove('hidden');
+                video.play();
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+                alert('Error accessing camera. Please make sure you have granted camera permissions.');
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('camera');
+            const canvas = document.getElementById('canvas');
+            const photo = document.getElementById('photo');
+            const context = canvas.getContext('2d');
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            photo.src = canvas.toDataURL('image/png');
+            video.classList.add('hidden');
+            if(stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        // Form handling
+        document.getElementById('visitorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Visitor entry saved successfully!');
+            this.reset();
+            document.getElementById('photo').src = '';
+        });
+
+        // Print functionality
+        function printPass() {
+            const printWindow = window.open('', '', 'width=800,height=600');
+            const visitorName = document.getElementById('visitorName').value;
+            const purpose = document.getElementById('purpose').value;
+            const meetPerson = document.getElementById('meetPerson').value;
+
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Visitor Pass</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        .pass { border: 2px solid #000; padding: 20px; max-width: 400px; margin: 0 auto; }
+                        .header { text-align: center; font-size: 24px; margin-bottom: 20px; }
+                        .details { margin-bottom: 10px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="pass">
+                        <div class="header">Visitor Pass</div>
+                        <div class="details">
+                            <strong>Name:</strong> ${visitorName}<br>
+                            <strong>Purpose:</strong> ${purpose}<br>
+                            <strong>Meeting:</strong> ${meetPerson}<br>
+                            <strong>Date:</strong> ${new Date().toLocaleDateString()}<br>
+                            <strong>Time:</strong> ${new Date().toLocaleTimeString()}
+                        </div>
+                    </div>
+                    <script>window.print(); window.close();</script>
+                <script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+                </html>
